@@ -1,55 +1,54 @@
 $(function() {
-
-  let userCords;
-  let contentString;
   let infowindow;
   let map;
   let brewData;
-  let filteredBrewData;
-  let jsonString;
   let marker;
-  let coordObj = {};
+  const coordObj = {};
   let bounds;
+  let hours;
+  let address;
+  let website;
+  let brewName;
+  let markers = [];
+  let prev_infowindow = false;
 
+  function initMap() {
+    const mapOptions = {
+      zoom: 5,
+      center: new google.maps.LatLng(37.09024, -100.712891),
+      panControl: false,
+      zoomControl: true,
+      zoomControlOptions: {
+        style: google.maps.ZoomControlStyle.LARGE,
+        position: google.maps.ControlPosition.RIGHT_CENTER
+      },
+      scaleControl: false
 
-  if (navigator.geolocation) {
+    };
 
-    function error(err) {
-      console.warn('ERROR(' + err.code + '): ' + err.message);
-    }
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-    function success(pos) {
-      userCords = pos.coords;
-
-      //return userCords;
-    }
-
-    // Get the user's current position
-    navigator.geolocation.getCurrentPosition(success, error);
-    //console.log(pos.latitude + " " + pos.longitude);
-  } else {
-    alert('Geolocation is not supported in your browser');
+    bounds = new google.maps.LatLngBounds();
   }
 
-  let mapOptions = {
-    zoom: 5,
-    center: new google.maps.LatLng(37.09024, -100.712891),
-    panControl: false,
-    zoomControl: true,
-    zoomControlOptions: {
-      style: google.maps.ZoomControlStyle.LARGE,
-      position: google.maps.ControlPosition.RIGHT_CENTER
-    },
-    scaleControl: false
+  function createMarker(store, coordObj) {
+    marker = new google.maps.Marker({
+      position: coordObj,
+      map: map,
+      title: store.name
+    });
+    markers.push(marker);
+  }
 
-  };
+  function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  }
 
 
 
-  map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-  bounds = new google.maps.LatLngBounds();
-
+  initMap();
 
 
   function submitClick(event) {
@@ -60,39 +59,50 @@ $(function() {
       console.log(resData);
       brewData = resData;
       brewData = brewData.data;
+      map = null;
 
-      function clearMarkers() {
-        setMapOnAll(null);
-      }
-
+      initMap();
 
       for (var store of brewData) {
-        console.log(store);
         coordObj.lat = store.latitude;
         coordObj.lng = store.longitude;
-        console.log(coordObj);
-        marker = new google.maps.Marker({
-          position: coordObj,
-          map: map,
-          title: store.name
-        });
+        createMarker(store, coordObj);
 
         loc = new google.maps.LatLng(marker.position.lat(), marker.position.lng());
         bounds.extend(loc);
 
+        if (store.hoursOfOperation === undefined) {
+          hours = '';
+        } else {
+          hours = store.hoursOfOperation;
+        }
+
+        if (store.streetAddress === undefined) {
+          address = '';
+        } else {
+          address = store.streetAddress;
+        }
+
+        if (store.website === undefined) {
+          website = ''
+          brewName = ''
+        } else {
+          website = store.website;
+          brewName = store.brewery.name
+        }
+
         content = '<div id="content">' +
-          '<div id="siteNotice">' +
-          '</div>' +
           `<h3 id="firstHeading" class="firstHeading">${store.brewery.name}</h3>` +
+          `<div><img src=${store.brewery.images.squareMedium}></div>` +
           '<div id="bodyContent">' +
           `${store.brewery.description} ` +
           '</div>' +
           '</br>' +
-          `<div>${store.streetAddress}</div>` +
+          `<div>${address}</div>` +
           '</br>' +
-          `<div>${store.hoursOfOperation}</div>` +
+          `<div>${hours}</div>` +
           '</br>' +
-          `<div><a href=${store.website}>${store.brewery.name}</div>` +
+          `<div><a href=${website}>${brewName}</div>` +
           '</div>';
 
         infowindow = new google.maps.InfoWindow({
@@ -101,30 +111,22 @@ $(function() {
 
         google.maps.event.addListener(marker, 'click', (function(marker, content, infowindow) {
           return function() {
+            if (prev_infowindow) {
+              prev_infowindow.close();
+            }
             infowindow.setContent(content);
+            prev_infowindow = infowindow;
             infowindow.open(map, marker);
           };
         })(marker, content, infowindow));
-
-
-
-
 
       }
       map.fitBounds(bounds);
       map.panToBounds(bounds);
 
     });
-
+    setMapOnAll(map);
   }
-
-
-
-
-
-
-
-
 
   $('#button').click(submitClick);
 
