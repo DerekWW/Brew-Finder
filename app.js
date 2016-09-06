@@ -23,11 +23,8 @@ $(function() {
         position: google.maps.ControlPosition.RIGHT_CENTER
       },
       scaleControl: false
-
     };
-
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
     bounds = new google.maps.LatLngBounds();
   }
 
@@ -44,6 +41,19 @@ $(function() {
     for (var i = 0; i < markers.length; i++) {
       markers[i].setMap(map);
     }
+  }
+
+  function setEventListner() {
+    google.maps.event.addListener(marker, 'click', (function(marker, content, infowindow) {
+      return function() {
+        if (prev_infowindow) {
+          prev_infowindow.close();
+        }
+        infowindow.setContent(content);
+        prev_infowindow = infowindow;
+        infowindow.open(map, marker);
+      };
+    })(marker, content, infowindow));
   }
 
 
@@ -84,11 +94,11 @@ $(function() {
         }
 
         if (store.website === undefined) {
-          website = ''
-          brewName = ''
+          website = '';
+          brewName = '';
         } else {
           website = store.website;
-          brewName = store.brewery.name
+          brewName = store.brewery.name;
         }
 
         content = '<div id="content">' +
@@ -109,18 +119,10 @@ $(function() {
           content: content
         });
 
-        google.maps.event.addListener(marker, 'click', (function(marker, content, infowindow) {
-          return function() {
-            if (prev_infowindow) {
-              prev_infowindow.close();
-            }
-            infowindow.setContent(content);
-            prev_infowindow = infowindow;
-            infowindow.open(map, marker);
-          };
-        })(marker, content, infowindow));
+        setEventListner();
 
       }
+
       map.fitBounds(bounds);
       map.panToBounds(bounds);
 
