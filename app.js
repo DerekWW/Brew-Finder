@@ -9,7 +9,6 @@ $(function() {
   let address;
   let website;
   let brewName;
-  let markers = [];
   let prevInfoWindow;
   let mapOptions;
   let logo;
@@ -40,15 +39,8 @@ $(function() {
       map: map,
       title: brewery.brewery.name
     });
-    markers.push(marker);
-  }
 
-  // sets all the markers from markers array onto map
-  // function setMapOnAll(map) {
-  //   for (let i = 0; i < markers.length; i++) {
-  //     markers[i].setMap(map);
-  //   }
-  // }
+  }
 
   // sets event listener on marker to close info window if another opens
   function setEventListner() {
@@ -77,8 +69,6 @@ $(function() {
 
       address = store.streetAddress || '';
 
-      logo = store.brewery.images || '';
-
       description = store.brewery.description || 'No Description Avaliable';
 
       phone = store.phone || '';
@@ -91,10 +81,16 @@ $(function() {
         brewName = store.brewery.name;
       }
 
+      if (store.brewery.images === undefined) {
+        logo = '';
+      } else {
+        logo = `<img src=${store.brewery.images.medium}>`;
+      }
+
 
       content = '<div id="content">' +
         `<h3 id="firstHeading" class="firstHeading">${store.brewery.name}</h3>` +
-        `<div><img src=${logo.medium}></div>` +
+        `<div>${logo}` +
         '<div id="bodyContent">' +
         `${description} ` +
         '</div>' +
@@ -116,6 +112,14 @@ $(function() {
     }
   }
 
+  function throwError() {
+    $('#error').text('No Breweries Found!')
+  }
+
+  function clearError() {
+    $('#error').text('')
+  }
+
   // set click event on button to populate mapwith markers
   function submitClick(event) {
     event.preventDefault();
@@ -123,16 +127,25 @@ $(function() {
     brewData.done(function(resData) {
       brewData = resData;
       brewData = brewData.data;
-      markers = [];
-      map = null;
-      initMap();
-      setInfoWindowContents();
-      map.fitBounds(bounds);
-      map.panToBounds(bounds);
+      if (brewData === undefined) {
+        throwError();
+      } else {
+        clearError()
+        map = null;
+        initMap();
+        setInfoWindowContents();
+        map.fitBounds(bounds);
+        map.panToBounds(bounds);
+      }
+
+
+
+
+
     });
 
     // setMapOnAll(map);
-    console.log(markers);
+
   }
 
   initMap(); // initializes first map on page load
