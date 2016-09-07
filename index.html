@@ -24,24 +24,28 @@
 
     <div class="row  brown lighten-5">
       <div class="col s2 flow-text ">
-        <div class="row">
-          <div class="col s12 flow-text center-align">
-            Find local breweries wherever you are!
-          </div>
+        <form>
           <div class="row">
-            <div class="col s12 flow-text black-text">
-              <input id="number" type="number" class="validate">
-              <label for="number">Zip Code</label>
+            <div class="col s12 flow-text center-align">
+              Find local breweries wherever you are!
+            </div>
+            <div class="row">
+              <div class="col s12 flow-text black-text">
+                <input id="number" type="number" class="validate">
+                <label for="number">Zip Code</label>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col s12 ">
-            <a id='button' class="waves-effect waves-light brown btn"><i class="material-icons left">cloud</i>Find Beer</a>
+          <div class="row">
+            <div class="col s12 center">
+              <button id='button' class="btn waves-effect waves-light brown" type="submit" name="action">Submit
+              <i class="material-icons right">send</i>
+            </button>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
-      <div class="col s10 flow-text">
+      <div id='map-container' class="col s10 flow-text">
         <div id='map'>
 
         </div>
@@ -50,6 +54,28 @@
 
 
   </main>
+
+  <footer class="page-footer brown">
+    <div class="container ">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Brew Finder</h5>
+        </div>
+        <div class="col l4 offset-l2 s12">
+          <h5 class="white-text">Links</h5>
+          <ul>
+            <li><a class="grey-text text-lighten-3" href="https://github.com/DerekWW">Github</a></li>
+            <li><a class="grey-text text-lighten-3" href="https://www.linkedin.com/in/derek-wierson">Linkedin</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+        © 2016 Derek Wierson G34
+      </div>
+    </div>
+  </footer>
 
 
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>

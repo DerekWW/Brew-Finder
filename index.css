@@ -1,4 +1,14 @@
-#map {
-  height: 800px;
-  width: 100%;
+#map-container{
+    overflow:hidden;
+    padding-bottom:40%;
+    position:relative;
+    height:0;
+}
+
+#map{
+    left:0;
+    top:0;
+    height:100%;
+    width:100%;
+    position:absolute;
 }

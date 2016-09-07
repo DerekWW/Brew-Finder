@@ -9,11 +9,13 @@ $(function() {
   let address;
   let website;
   let brewName;
-  let markers = [];
-  let prev_infowindow = false;
+  const markers = [];
+  let prevInfoWindow;
+  let mapOptions;
 
+  // initalize a new map
   function initMap() {
-    const mapOptions = {
+    mapOptions = {
       zoom: 5,
       center: new google.maps.LatLng(37.09024, -100.712891),
       panControl: false,
@@ -28,108 +30,99 @@ $(function() {
     bounds = new google.maps.LatLngBounds();
   }
 
-  function createMarker(store, coordObj) {
+  // create new map marker from API data passed in and pushes marker into array, used in loop
+  function createMarker(brewery, coords) {
     marker = new google.maps.Marker({
-      position: coordObj,
+      position: coords,
       map: map,
-      title: store.name
+      title: brewery.name
     });
     markers.push(marker);
   }
 
+  //sets all the markers from markers array onto map
   function setMapOnAll(map) {
-    for (var i = 0; i < markers.length; i++) {
+    for (let i = 0; i < markers.length; i++) {
       markers[i].setMap(map);
     }
   }
 
+  // sets event listener on marker to close info window if another opens
   function setEventListner() {
     google.maps.event.addListener(marker, 'click', (function(marker, content, infowindow) {
       return function() {
-        if (prev_infowindow) {
-          prev_infowindow.close();
+        if (prevInfoWindow) {
+          prevInfoWindow.close();
         }
-        infowindow.setContent(content);
-        prev_infowindow = infowindow;
+        prevInfoWindow = infowindow;
         infowindow.open(map, marker);
       };
     })(marker, content, infowindow));
   }
 
+  // creates the coords and info window content and sets the content
+  function setInfoWindowContents() {
+    for (const store of brewData) {
+      coordObj.lat = store.latitude;
+      coordObj.lng = store.longitude;
+      createMarker(store, coordObj);
+
+      loc = new google.maps.LatLng(marker.position.lat(), marker.position.lng());
+      bounds.extend(loc);
+
+      hours = store.hoursOfOperation || '';
+
+      address = store.streetAddress || '';
+
+      if (store.website === undefined) {
+        website = '';
+        brewName = '';
+      } else {
+        website = store.website;
+        brewName = store.brewery.name;
+      }
 
 
-  initMap();
+      content = '<div id="content">' +
+        `<h3 id="firstHeading" class="firstHeading">${store.brewery.name}</h3>` +
+        `<div><img src=${store.brewery.images.medium}></div>` +
+        '<div id="bodyContent">' +
+        `${store.brewery.description} ` +
+        '</div>' +
+        '</br>' +
+        `<div>${address}</div>` +
+        '</br>' +
+        `<div>${hours}</div>` +
+        '</br>' +
+        `<div><a href=${website}>${brewName}</div>` +
+        '</div>';
 
+      infowindow = new google.maps.InfoWindow({
+        content: content
+      });
 
+      setEventListner();
+    }
+  }
+
+  // set click event on button to populate mapwith markers
   function submitClick(event) {
     event.preventDefault();
     brewData = $.getJSON(`http://cors-anywhere.herokuapp.com/api.brewerydb.com/v2/locations/?key=dbf3bd0628e34ab8dd8398fa95503119&postalCode=${$('#number').val()}`);
-    console.log(brewData);
     brewData.done(function(resData) {
-      console.log(resData);
       brewData = resData;
       brewData = brewData.data;
       map = null;
-
       initMap();
-
-      for (var store of brewData) {
-        coordObj.lat = store.latitude;
-        coordObj.lng = store.longitude;
-        createMarker(store, coordObj);
-
-        loc = new google.maps.LatLng(marker.position.lat(), marker.position.lng());
-        bounds.extend(loc);
-
-        if (store.hoursOfOperation === undefined) {
-          hours = '';
-        } else {
-          hours = store.hoursOfOperation;
-        }
-
-        if (store.streetAddress === undefined) {
-          address = '';
-        } else {
-          address = store.streetAddress;
-        }
-
-        if (store.website === undefined) {
-          website = '';
-          brewName = '';
-        } else {
-          website = store.website;
-          brewName = store.brewery.name;
-        }
-
-        content = '<div id="content">' +
-          `<h3 id="firstHeading" class="firstHeading">${store.brewery.name}</h3>` +
-          `<div><img src=${store.brewery.images.squareMedium}></div>` +
-          '<div id="bodyContent">' +
-          `${store.brewery.description} ` +
-          '</div>' +
-          '</br>' +
-          `<div>${address}</div>` +
-          '</br>' +
-          `<div>${hours}</div>` +
-          '</br>' +
-          `<div><a href=${website}>${brewName}</div>` +
-          '</div>';
-
-        infowindow = new google.maps.InfoWindow({
-          content: content
-        });
-
-        setEventListner();
-
-      }
-
+      setInfoWindowContents();
       map.fitBounds(bounds);
       map.panToBounds(bounds);
-
     });
+
     setMapOnAll(map);
   }
 
-  $('#button').click(submitClick);
+  initMap(); // initializes first map on page load
+  $('#button').click(submitClick); // creates new map with markers generated from API data
 
 });
