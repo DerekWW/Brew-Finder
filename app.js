@@ -9,9 +9,12 @@ $(function() {
   let address;
   let website;
   let brewName;
-  const markers = [];
+  let markers = [];
   let prevInfoWindow;
   let mapOptions;
+  let logo;
+  let description;
+  let phone;
 
   // initalize a new map
   function initMap() {
@@ -35,17 +38,17 @@ $(function() {
     marker = new google.maps.Marker({
       position: coords,
       map: map,
-      title: brewery.name
+      title: brewery.brewery.name
     });
     markers.push(marker);
   }
 
-  //sets all the markers from markers array onto map
-  function setMapOnAll(map) {
-    for (let i = 0; i < markers.length; i++) {
-      markers[i].setMap(map);
-    }
-  }
+  // sets all the markers from markers array onto map
+  // function setMapOnAll(map) {
+  //   for (let i = 0; i < markers.length; i++) {
+  //     markers[i].setMap(map);
+  //   }
+  // }
 
   // sets event listener on marker to close info window if another opens
   function setEventListner() {
@@ -74,6 +77,12 @@ $(function() {
 
       address = store.streetAddress || '';
 
+      logo = store.brewery.images || '';
+
+      description = store.brewery.description || 'No Description Avaliable';
+
+      phone = store.phone || '';
+
       if (store.website === undefined) {
         website = '';
         brewName = '';
@@ -85,14 +94,16 @@ $(function() {
 
       content = '<div id="content">' +
         `<h3 id="firstHeading" class="firstHeading">${store.brewery.name}</h3>` +
-        `<div><img src=${store.brewery.images.medium}></div>` +
+        `<div><img src=${logo.medium}></div>` +
         '<div id="bodyContent">' +
-        `${store.brewery.description} ` +
+        `${description} ` +
         '</div>' +
         '</br>' +
         `<div>${address}</div>` +
         '</br>' +
         `<div>${hours}</div>` +
+        '</br>' +
+        `<div><a href='tel:${phone}'>${phone}</div>` +
         '</br>' +
         `<div><a href=${website}>${brewName}</div>` +
         '</div>';
@@ -112,6 +123,7 @@ $(function() {
     brewData.done(function(resData) {
       brewData = resData;
       brewData = brewData.data;
+      markers = [];
       map = null;
       initMap();
       setInfoWindowContents();
@@ -119,7 +131,8 @@ $(function() {
       map.panToBounds(bounds);
     });
 
-    setMapOnAll(map);
+    // setMapOnAll(map);
+    console.log(markers);
   }
 
   initMap(); // initializes first map on page load
