@@ -14,6 +14,123 @@ $(function() {
   let logo;
   let description;
   let phone;
+  let userCoords;
+  let userZip;
+
+
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      console.log(position);
+      userCoords = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+    });
+    console.log(userCoords);
+  } else {
+    $('#geoError').text('Geo Location Not Avaliable')
+  }
+
+  
+
+  //Styling for google map
+  let styledMapType = new google.maps.StyledMapType(
+    [{
+      "featureType": "all",
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#ffffff"
+      }]
+    }, {
+      "featureType": "all",
+      "elementType": "labels.text.stroke",
+      "stylers": [{
+        "color": "#000000"
+      }, {
+        "lightness": 13
+      }]
+    }, {
+      "featureType": "administrative",
+      "elementType": "geometry.fill",
+      "stylers": [{
+        "color": "#000000"
+      }]
+    }, {
+      "featureType": "administrative",
+      "elementType": "geometry.stroke",
+      "stylers": [{
+        "color": "#144b53"
+      }, {
+        "lightness": 14
+      }, {
+        "weight": 1.4
+      }]
+    }, {
+      "featureType": "landscape",
+      "elementType": "all",
+      "stylers": [{
+        "color": "#08304b"
+      }]
+    }, {
+      "featureType": "poi",
+      "elementType": "geometry",
+      "stylers": [{
+        "color": "#0c4152"
+      }, {
+        "lightness": 5
+      }]
+    }, {
+      "featureType": "road.highway",
+      "elementType": "geometry.fill",
+      "stylers": [{
+        "color": "#000000"
+      }]
+    }, {
+      "featureType": "road.highway",
+      "elementType": "geometry.stroke",
+      "stylers": [{
+        "color": "#0b434f"
+      }, {
+        "lightness": 25
+      }]
+    }, {
+      "featureType": "road.arterial",
+      "elementType": "geometry.fill",
+      "stylers": [{
+        "color": "#000000"
+      }]
+    }, {
+      "featureType": "road.arterial",
+      "elementType": "geometry.stroke",
+      "stylers": [{
+        "color": "#0b3d51"
+      }, {
+        "lightness": 16
+      }]
+    }, {
+      "featureType": "road.local",
+      "elementType": "geometry",
+      "stylers": [{
+        "color": "#000000"
+      }]
+    }, {
+      "featureType": "transit",
+      "elementType": "all",
+      "stylers": [{
+        "color": "#146474"
+      }]
+    }, {
+      "featureType": "water",
+      "elementType": "all",
+      "stylers": [{
+        "color": "#021019"
+      }]
+    }], {
+      name: 'Styled Map'
+    }
+
+  );
+
 
   // initalize a new map
   function initMap() {
@@ -22,6 +139,11 @@ $(function() {
       center: new google.maps.LatLng(37.09024, -100.712891),
       panControl: false,
       zoomControl: true,
+      mapTypeControlOptions: {
+        mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain',
+          'styled_map'
+        ]
+      },
       zoomControlOptions: {
         style: google.maps.ZoomControlStyle.LARGE,
         position: google.maps.ControlPosition.RIGHT_CENTER
@@ -30,6 +152,8 @@ $(function() {
     };
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
     bounds = new google.maps.LatLngBounds();
+    map.mapTypes.set('styled_map', styledMapType);
+    map.setMapTypeId('styled_map');
   }
 
   // create new map marker from API data passed in and pushes marker into array, used in loop
@@ -132,23 +256,37 @@ $(function() {
       } else {
         clearError()
         map = null;
-        initMap();
+        initMap()
         setInfoWindowContents();
         map.fitBounds(bounds);
         map.panToBounds(bounds);
       }
-
-
-
-
-
     });
-
-    // setMapOnAll(map);
-
   }
+
+  // function locationClick(event) {
+  //   event.preventDefault();
+  //   brewData = $.getJSON(`http://cors-anywhere.herokuapp.com/api.brewerydb.com/v2/locations/?key=dbf3bd0628e34ab8dd8398fa95503119&postalCode=${$('#number').val()}`);
+  //   brewData.done(function(resData) {
+  //     brewData = resData;
+  //     brewData = brewData.data;
+  //     if (brewData === undefined) {
+  //       throwError();
+  //     } else {
+  //       clearError()
+  //       map = null;
+  //       initMap()
+  //       setInfoWindowContents();
+  //       map.fitBounds(bounds);
+  //       map.panToBounds(bounds);
+  //     }
+  //   });
+  // }
+
+
 
   initMap(); // initializes first map on page load
   $('#button').click(submitClick); // creates new map with markers generated from API data
+
 
 });

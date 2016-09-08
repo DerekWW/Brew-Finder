@@ -1,14 +1,39 @@
-#map-container{
-    overflow:hidden;
-    padding-bottom:40%;
-    position:relative;
-    height:0;
+#map-container {
+    overflow: hidden;
+    padding-bottom: 48.75%;
+    position: relative;
+    height: 0;
 }
 
-#map{
-    left:0;
-    top:0;
-    height:100%;
-    width:100%;
-    position:absolute;
+#map {
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+#map-row {
+    margin-bottom: 0px !important;
+    background-color: #F6F1D1;
+}
+
+footer {
+    margin-top: 0px !important;
+}
+
+#button {
+    background-color: #40798C !important;
+}
+
+footer {
+    background-color: #40798C !important;
+}
+
+.nav-wrapper {
+    background-color: #40798C !important;
+}
+
+html {
+    font-family: 'Space Mono', monospace;
 }
