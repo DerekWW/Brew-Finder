@@ -17,22 +17,6 @@ $(function() {
   let userCoords;
   let userZip;
 
-
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      console.log(position);
-      userCoords = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-    });
-    console.log(userCoords);
-  } else {
-    $('#geoError').text('Geo Location Not Avaliable')
-  }
-
-  
-
   //Styling for google map
   let styledMapType = new google.maps.StyledMapType(
     [{
@@ -130,7 +114,6 @@ $(function() {
     }
 
   );
-
 
   // initalize a new map
   function initMap() {
@@ -263,27 +246,6 @@ $(function() {
       }
     });
   }
-
-  // function locationClick(event) {
-  //   event.preventDefault();
-  //   brewData = $.getJSON(`http://cors-anywhere.herokuapp.com/api.brewerydb.com/v2/locations/?key=dbf3bd0628e34ab8dd8398fa95503119&postalCode=${$('#number').val()}`);
-  //   brewData.done(function(resData) {
-  //     brewData = resData;
-  //     brewData = brewData.data;
-  //     if (brewData === undefined) {
-  //       throwError();
-  //     } else {
-  //       clearError()
-  //       map = null;
-  //       initMap()
-  //       setInfoWindowContents();
-  //       map.fitBounds(bounds);
-  //       map.panToBounds(bounds);
-  //     }
-  //   });
-  // }
-
-
 
   initMap(); // initializes first map on page load
   $('#button').click(submitClick); // creates new map with markers generated from API data
