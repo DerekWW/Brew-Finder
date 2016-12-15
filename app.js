@@ -230,7 +230,7 @@ $(function() {
   // set click event on button to populate mapwith markers
   function submitClick(event) {
     event.preventDefault();
-    brewData = $.getJSON(`http://cors-anywhere.herokuapp.com/api.brewerydb.com/v2/locations/?key=dbf3bd0628e34ab8dd8398fa95503119&postalCode=${$('#number').val()}`);
+    brewData = $.getJSON(`http://cors-proxy.htmldriven.com/?url=api.brewerydb.com/v2/locations/?key=dbf3bd0628e34ab8dd8398fa95503119&postalCode=${$('#number').val()}`);
     brewData.done(function(resData) {
       brewData = resData;
       brewData = brewData.data;
