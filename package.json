@@ -1,0 +1,28 @@
+{
+  "name": "brew_finder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DerekWW/Brew-Finder.git"
+  },
+  "keywords": [],
+  "author": "Derek Wierson <derek.wierson@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DerekWW/Brew-Finder/issues"
+  },
+  "homepage": "https://github.com/DerekWW/Brew-Finder#readme",
+  "devDependencies": {
+    "babel-eslint": "^7.2.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.10.3"
+  }
+}
